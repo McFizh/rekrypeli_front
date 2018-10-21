@@ -10,7 +10,7 @@
   "dependencies": {
     "codeflask": "1.2.1",
     "vue": "2.5.17",
-    "vue-slider-component": "2.7.9"
+    "vue-slider-component": "2.8.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.0.5",

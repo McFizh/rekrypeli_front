@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div class="grid-container">
-      <div class="grid-5-12">
+      <div class="narrow-column">
         <GameCanvas/>
       </div>
-      <div class="grid-7-12">
+      <div class="column">
         <CodeEditor name="editor2"/>
       </div>
     </div>
@@ -24,10 +24,21 @@ export default {
 </script>
 
 <style>
+body {
+  margin:0;
+}
+
+#app {
+  margin: 15px;
+}
+
 .grid-container {
   width: 100%;
   display: flex;
 }
+
+.column { flex: 1; }
+.narrow-column { flex: none; }
 
 .grid-4-12 { flex: 4; }
 .grid-5-12 { flex: 5; }

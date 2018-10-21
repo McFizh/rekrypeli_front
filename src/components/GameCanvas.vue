@@ -1,13 +1,28 @@
 <template>
   <div class="gamecontainer">
     <canvas id="gamecanvas" width="500" height="500"/>
-    <br/><br/><br/>
-    <vue-slider ref="slider" v-model="value"/>
+    <br/><br/>
+    <div class="grid-container">
+      <div class="column" style="margin-top: 20px;">
+        <vue-slider ref="slider" v-model="value"/>
+      </div>
+      <div class="narrow-column">
+        <button @click="runSimulation" class="runbutton">
+          <i class="fas fa-play" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import vueSlider from 'vue-slider-component/src/vue-slider.vue';
+
+import canvasTools from "../game-engine/canvas.js";
+import gameEngine from "../game-engine/game.js";
+
+var gameInterval;
+var loopCount=0;
 
 export default {
   name: 'GameCanvas',
@@ -21,101 +36,36 @@ export default {
     };
   },
 
+  methods: {
+    runSimulation: function () {
+      loopCount = 50;
+      gameInterval = setInterval(function() { runloop(false);  },100);
+    }
+  },
+
   mounted: function() {
-    setInterval(function() {
-      runloop();
-    },50);
+    gameEngine.reset();
+    runloop(true);
   }
 }
 
-function runloop() {
-    drawGameArea();
-    drawLander(250,50,4);
+function runloop(init) {
+    //
+    gameEngine.runSimulationLoop();
+    canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
+    canvasTools.drawLander(250, 150-gameEngine.getHeight() ,gameEngine.getThrust());
+
+    if(init) {
+      return;
+    }
+
+    //
+    loopCount--;
+    if(loopCount<=0) {
+      clearInterval(gameInterval);
+    }
 }
 
-function drawGameArea() {
-  var el = document.getElementById("gamecanvas");
-  var ctx = el.getContext("2d");
-  var yoff = 450;
-  var safex1 = 180;
-  var safex2 = 350;
-
-  //
-  ctx.clearRect(0, 0, 500,500);
-
-  // Draw mountain
-  ctx.strokeStyle="#ff0000";
-  ctx.beginPath();
-  ctx.moveTo(0,yoff+50);
-  ctx.lineTo(100,yoff-100);
-  ctx.lineTo(safex1,yoff);
-  ctx.lineTo(safex2,yoff);
-  ctx.lineTo(450,yoff-40);
-  ctx.lineTo(500,yoff-120);
-  ctx.stroke();
-
-  // Draw hud
-  ctx.font = "25px Arial";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("Fuel: 500",10,30);
-  ctx.fillText(" Spd: 0",10,60);
-  ctx.fillText(" Eng: 0",10,90);
-
-}
-
-function drawLander(xpos,ypos, engine) {
-  var el = document.getElementById("gamecanvas");
-  var ctx = el.getContext("2d");
-
-  ctx.strokeStyle="#00ff00";
-
-  ctx.beginPath();
-  ctx.ellipse(xpos,ypos,15,20, 0, 0 ,2*Math.PI);
-
-  // Box below circle
-  ctx.moveTo(xpos-15,ypos+20);
-  ctx.lineTo(xpos+15,ypos+20);
-  ctx.lineTo(xpos+20,ypos+35);
-  ctx.lineTo(xpos-20,ypos+35);
-  ctx.lineTo(xpos-15,ypos+20);
-
-  // Support lines from box to ellipse
-  ctx.moveTo(xpos-15,ypos+20);
-  ctx.lineTo(xpos-10,ypos+15);
-  ctx.moveTo(xpos+15,ypos+20);
-  ctx.lineTo(xpos+10,ypos+15);
-
-  // Left landing gear
-  ctx.moveTo(xpos-20,ypos+35);
-  ctx.lineTo(xpos-22,ypos+50);
-  ctx.moveTo(xpos-26,ypos+50);
-  ctx.lineTo(xpos-18,ypos+50);
-
-  // right landing gear
-  ctx.moveTo(xpos+20,ypos+35);
-  ctx.lineTo(xpos+22,ypos+50);
-  ctx.moveTo(xpos+26,ypos+50);
-  ctx.lineTo(xpos+18,ypos+50);
-  ctx.stroke();
-
-  // Draw flame
-  if(engine>0) {
-    var multiplier = Math.floor(Math.random()*3)+1;
-
-    var size=engine*(4+multiplier);
-    ctx.beginPath();
-    ctx.strokeStyle="#ffff00";
-    ctx.ellipse(xpos,ypos+40+size,10,size, 0, 0 ,2*Math.PI);
-    ctx.stroke();
-
-    multiplier = Math.floor(Math.random()*3)+1;
-    size=engine*(4+multiplier);
-    ctx.beginPath();
-    ctx.strokeStyle="#ff0000";
-    ctx.ellipse(xpos,ypos+40+size,8,size, 0, 0 ,2*Math.PI);
-    ctx.stroke();
-  }
-}
 </script>
 
 <style scoped>
@@ -124,7 +74,18 @@ function drawLander(xpos,ypos, engine) {
     border: 1px solid #bdbdbd;
     position: relative;
     height: 500px; width: 500px;
-    margin: 15px;
+    margin: 0px 15px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
 }
+
+.runbutton {
+  font-size: 2em;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.runbutton i {
+  margin: 5px;
+}
+
 </style>

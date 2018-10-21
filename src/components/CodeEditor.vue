@@ -27,7 +27,6 @@ export default {
         border: 1px solid #bdbdbd;
         position: relative;
         min-height: 600px;
-        margin: 15px;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
     }
 </style>
