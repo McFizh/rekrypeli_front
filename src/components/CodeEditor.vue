@@ -1,24 +1,39 @@
 <template>
-  <div :id="editorId" class="flask-editor" />
+    <div :id="editorId" class="flask-editor">
+        function calcIteration(fuel, speed, height) {
+            // For every loop iteration, you will get 3 values:
+            // fuel: remaining fuel (0-500)
+            // speed: vertical speed
+            // height: height of the lander
+
+            // ::::::::::::::::::
+            // Add your code here
+            // ::::::::::::::::::
+
+            // Return engine power value (0-4)
+            return 0;
+        }
+    </div>
 </template>
 
 <script>
 import CodeFlask from 'codeflask';
 
 export default {
-  name: 'CodeEditor',
-  props: [ 'name' ],
+    name: 'CodeEditor',
+    props: [ 'name' ],
 
-  data: function() {
-    return {
-        editorId: this.name + "-flask"
-    };
-  },
+    data: function() {
+        return {
+            editorId: this.name + "-flask"
+        };
+    },
 
-  mounted: function() {
-    var el = document.getElementById(this.editorId);
-    new CodeFlask(el, { language: 'js' });
-  }
+    mounted: function() {
+        new CodeFlask(
+            document.getElementById(this.editorId), { language: 'js' }
+        );
+    }
 }
 </script>
 

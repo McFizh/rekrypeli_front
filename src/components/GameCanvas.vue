@@ -39,7 +39,7 @@ export default {
   methods: {
     runSimulation: function () {
       loopCount = 50;
-      gameInterval = setInterval(function() { runloop(false);  },100);
+      gameInterval = setInterval(function() { runloop(false); },100);
     }
   },
 
@@ -65,7 +65,6 @@ function runloop(init) {
       clearInterval(gameInterval);
     }
 }
-
 </script>
 
 <style scoped>
