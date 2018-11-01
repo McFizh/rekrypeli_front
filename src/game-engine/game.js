@@ -1,13 +1,13 @@
 var fuel=500,
     speed=0,
     thrust=0,
-    height=100;
+    height;
 
 function reset() {
-    fuel=500;
+    fuel=100;
     speed=0;
     thrust=0;
-    height=1000;
+    height=4000;
 }
 
 function getFuel() { return fuel; }
@@ -15,7 +15,25 @@ function getThrust() { return thrust; }
 function getSpeed() { return speed; }
 function getHeight() { return height/10; }
 
-function runSimulationLoop() {
+function executeCode(code, fuel, speed, height) {
+    "use strict";
+
+    let newcode="("+code+")("+fuel+","+speed+","+height+")";
+    var thrust = parseInt(eval(newcode));
+
+    if( isNaN(thrust) || thrust <0 || thrust>4 ) {
+        return 0;
+    }
+
+    return thrust;
+}
+
+function runSimulationLoop(usercode) {
+
+    thrust = executeCode(usercode, fuel, speed, height);
+    if(fuel <= 0 ) {
+        thrust = 0;
+    }
 
     //
     if(thrust==0) {
@@ -30,9 +48,25 @@ function runSimulationLoop() {
         speed-=1;
     }
 
+    if(speed > 300) {
+        speed = 300;
+    }
+
     //
     fuel-=thrust;
+
+    if(fuel<0) {
+        fuel=0;
+    }
+
     height-=speed;
+
+    if(height < 0 ) {
+        height=0;
+    }
+
+    // Return: is lander crashed
+    return height<=0?true:false;
 }
 
 export default {

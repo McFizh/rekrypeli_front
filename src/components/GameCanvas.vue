@@ -7,7 +7,7 @@
         <vue-slider ref="slider" v-model="value"/>
       </div>
       <div class="narrow-column">
-        <button @click="runSimulation" class="runbutton">
+        <button @click="requestCode" class="runbutton">
           <i class="fas fa-play" />
         </button>
       </div>
@@ -22,13 +22,16 @@ import canvasTools from "../game-engine/canvas.js";
 import gameEngine from "../game-engine/game.js";
 
 var gameInterval;
-var loopCount=0;
 
 export default {
   name: 'GameCanvas',
+
   components: {
     vueSlider
   },
+
+  props: [ 'bus' ],
+
 
   data: function() {
     return {
@@ -37,31 +40,50 @@ export default {
   },
 
   methods: {
-    runSimulation: function () {
-      loopCount = 50;
-      gameInterval = setInterval(function() { runloop(false); },100);
+    requestCode: function() {
+      this.bus.$emit('requestcode');
+
+      gameEngine.reset();
+      runloop(true,"");
+
+    },
+
+    runSimulation: function (code) {
+      gameInterval = setInterval(function() { 
+        runloop(false,code);
+      },100);
     }
   },
 
   mounted: function() {
+    // Reset game-engine
     gameEngine.reset();
-    runloop(true);
+    runloop(true,"");
+
+    // Bind event
+    this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
   }
 }
 
-function runloop(init) {
-    //
-    gameEngine.runSimulationLoop();
+function runloop(init, code) {
+    var crashed = false;
+
+    // Run simulation loop
+    if(!init) {
+      crashed = gameEngine.runSimulationLoop( code );
+    }
+
+    // Draw game area & lander
     canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
-    canvasTools.drawLander(250, 150-gameEngine.getHeight() ,gameEngine.getThrust());
+    canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
 
     if(init) {
       return;
     }
 
-    //
-    loopCount--;
-    if(loopCount<=0) {
+
+    // Safety counter
+    if(crashed) {
       clearInterval(gameInterval);
     }
 }

@@ -2,23 +2,32 @@
   <div id="app">
     <div class="grid-container">
       <div class="narrow-column">
-        <GameCanvas/>
+        <GameCanvas :bus="bus"/>
       </div>
       <div class="column">
-        <CodeEditor name="editor2"/>
+        <CodeEditor name="editor" ref="editor" :bus="bus"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
+
 import CodeEditor from './components/CodeEditor.vue';
 import GameCanvas from './components/GameCanvas.vue';
 
 export default {
   name: 'app',
+  
   components: {
     CodeEditor, GameCanvas
+  },
+
+  data: function() {
+    return {
+      bus: new Vue()
+    }
   }
 }
 </script>
