@@ -3,8 +3,8 @@
     <canvas id="gamecanvas" width="500" height="500"/>
     <br/><br/>
     <div class="grid-container">
-      <div class="column" style="margin-top: 20px;">
-        <vue-slider ref="slider" v-model="value"/>
+      <div class="column">
+        <timerComponent :minutes="minutes" :seconds="seconds"/>
       </div>
       <div class="narrow-column">
         <button @click="requestCode" class="runbutton">
@@ -16,18 +16,20 @@
 </template>
 
 <script>
-import vueSlider from 'vue-slider-component/src/vue-slider.vue';
+import timerComponent from "./TimerComponent.vue";
 
 import canvasTools from "../game-engine/canvas.js";
 import gameEngine from "../game-engine/game.js";
 
 var gameInterval;
+var clockInterval;
+var startingTime;
 
 export default {
   name: 'GameCanvas',
 
   components: {
-    vueSlider
+    timerComponent
   },
 
   props: [ 'bus' ],
@@ -35,7 +37,9 @@ export default {
 
   data: function() {
     return {
-      value: 1
+      value: 1,
+      minutes: 15,
+      seconds: "00"
     };
   },
 
@@ -56,13 +60,31 @@ export default {
   },
 
   mounted: function() {
+    var that = this;
+
+    // Set starting time
+    startingTime = new Date();
+
+    clockInterval = setInterval( () => {
+      runClockLoop(that);
+    },1000);
+
     // Reset game-engine
     gameEngine.reset();
     runloop(true,"");
 
     // Bind event
     this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
+
   }
+}
+
+function runClockLoop(that) {
+    var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
+    var timeLeft = 15*60 - timeSpent;
+
+    that.minutes = Math.floor(timeLeft / 60);
+    that.seconds = ( timeLeft % 60 ) < 10 ? "0"+( timeLeft % 60 ):( timeLeft % 60 );
 }
 
 function runloop(init, code) {
@@ -80,7 +102,6 @@ function runloop(init, code) {
     if(init) {
       return;
     }
-
 
     // Safety counter
     if(crashed) {
