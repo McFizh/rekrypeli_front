@@ -1,6 +1,6 @@
 <template>
     <modal name="startmodal">
-        <div class="modal">
+        <div class="modal-content">
         <h1>Ambientia Space Race</h1>
         <p>Atri Ambientialainen from Ambientia has been developing simulator for
             landing probe safely to Moon, but every simulation ends in a crash. <br/>
@@ -19,11 +19,6 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-    text-align: center;
-    padding: 10px 20px;
-}
-
 button {
     margin-top: 50px;
     font-size: 14pt;

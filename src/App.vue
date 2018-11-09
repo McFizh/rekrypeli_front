@@ -4,55 +4,91 @@
 
     <div v-if="gameIsRunning" class="grid-container">
       <div class="narrow-column">
-        <GameCanvas :bus="bus"/>
+        <GameCanvas :bus="bus"
+            @syntaxerror="showErrorLine"
+            @quitclicked="showGiveupDialog" />
       </div>
       <div class="column">
         <CodeEditor name="editor" ref="editor" :bus="bus"/>
       </div>
     </div>
 
-    <StartModal @start="startGame"></StartModal>
-    <EndModal></EndModal>
-    <modal name="giveupmodal">
-    </modal>
+    <div v-if="codeFailed" class="grid-container">
+        <div class="column content-box error-box">
+            Something went wrong while parsing your code
+            <span style='font-size: 200%; margin-left: 20px; vertical-align: middle;'>&#x1F92D;</span>
+
+        </div>
+    </div>
+
+    <StartModal @start="startGame" />
+    <EndModal />
+    <GiveupModal
+        @resume="resumeGame"
+        @giveup="giveupGame"/>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 
+// Import components
 import CodeEditor from './components/CodeEditor.vue';
 import GameCanvas from './components/GameCanvas.vue';
+
+// Import modals
 import StartModal from './components/StartModal.vue';
 import EndModal from './components/EndModal.vue';
+import GiveupModal from './components/GiveupModal.vue';
+
+// Import css
+require('@/assets/css/main.css');
 
 //
 export default {
   name: 'app',
 
   components: {
-    CodeEditor, GameCanvas, StartModal, EndModal
+    CodeEditor, GameCanvas,
+    StartModal, EndModal, GiveupModal
   },
 
   data: function() {
     return {
       bus: new Vue(),
-      gameIsRunning: false
+      gameIsRunning: false,
+      codeFailed: false
     }
   },
 
   methods: {
 
     showEndScreen: function(gameState) {
-      // Show end modal, which contains gamestate and signup form
-      // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
+        // Show end modal, which contains gamestate and signup form
+        // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
 
-      this.$modal.show('endmodal');
+        this.$modal.show('endmodal');
     },
 
     startGame: function() {
         this.$modal.hide('startmodal');
         this.gameIsRunning = true;
+    },
+
+    showErrorLine: function(arg1) {
+        this.codeFailed = arg1;
+    },
+
+    showGiveupDialog: function() {
+        this.$modal.show('giveupmodal');
+    },
+
+    resumeGame: function() {
+        this.$modal.hide('giveupmodal');
+    },
+
+    giveupGame: function() {
+        this.$modal.hide('giveupmodal');
     }
 
   },
@@ -64,27 +100,3 @@ export default {
 
 }
 </script>
-
-<style>
-body {
-  margin:0;
-}
-
-#app {
-  margin: 15px;
-}
-
-.grid-container {
-  width: 100%;
-  display: flex;
-}
-
-.column { flex: 1; }
-.narrow-column { flex: none; }
-
-.grid-4-12 { flex: 4; }
-.grid-5-12 { flex: 5; }
-.grid-6-12 { flex: 6; }
-.grid-7-12 { flex: 7; }
-.grid-8-12 { flex: 8; }
-</style>

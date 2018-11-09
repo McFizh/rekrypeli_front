@@ -56,22 +56,26 @@ export default {
         gameInterval = null;
       }
 
+      // Remove syntax error line (if any)
+      this.$emit('syntaxerror',false);
+
       // Reset game engine values & initialize game area
       gameEngine.reset();
-      runloop(true,"");
+      runloop(null,"");
 
       // This will request the coder from CodeEditor & start the engine
       this.bus.$emit('requestcode');
     },
 
     runSimulation: function (code) {
+      var that=this;
       gameInterval = setInterval(function() {
-        runloop(false,code);
+        runloop(that,code);
       },100);
     },
 
     abandonGame: function() {
-
+        this.$emit('quitclicked');
     }
   },
 
@@ -87,7 +91,7 @@ export default {
 
     // Reset game-engine
     gameEngine.reset();
-    runloop(true,"");
+    runloop(null,"");
 
     // Bind event
     this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
@@ -105,11 +109,11 @@ function runClockLoop(that) {
     that.seconds = ( timeLeft % 60 ) < 10 ? "0"+( timeLeft % 60 ):( timeLeft % 60 );
 }
 
-function runloop(init, code) {
+function runloop(that, code) {
     var endState;
 
     // Run simulation loop
-    if(!init) {
+    if(that) {
       endState = gameEngine.runSimulationLoop( code );
     }
 
@@ -117,7 +121,8 @@ function runloop(init, code) {
     canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
     canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
 
-    if(init) {
+    // Only on init 'that' is null
+    if(that==null) {
       return;
     }
 
@@ -131,7 +136,7 @@ function runloop(init, code) {
     } else if(endState==-2) {
       // Syntax error in code
       clearInterval(gameInterval);
-      this.$emit('syntaxerror');
+      that.$emit('syntaxerror',true);
     }
 }
 </script>

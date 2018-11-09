@@ -1,5 +1,5 @@
 <template>
-    <div :id="editorId" class="flask-editor">function calcIteration(fuel, speed, height) {
+    <div :id="editorId" class="content-box flask-editor">function calcIteration(fuel, speed, height) {
   // For every loop iteration, you will get 3 values:
   // fuel: remaining fuel (0-100)
   // speed: vertical speed
@@ -49,9 +49,6 @@ export default {
 
 <style scoped>
     .flask-editor {
-        border: 1px solid #bdbdbd;
-        position: relative;
         min-height: 600px;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
     }
 </style>
