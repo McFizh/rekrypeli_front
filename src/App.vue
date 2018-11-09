@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <div class="grid-container">
+
+
+    <div v-if="gameIsRunning" class="grid-container">
       <div class="narrow-column">
         <GameCanvas :bus="bus"/>
       </div>
@@ -8,25 +10,32 @@
         <CodeEditor name="editor" ref="editor" :bus="bus"/>
       </div>
     </div>
+
+    <StartModal @start="startGame"></StartModal>
+    <EndModal></EndModal>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from 'vue';
 
 import CodeEditor from './components/CodeEditor.vue';
 import GameCanvas from './components/GameCanvas.vue';
+import StartModal from './components/StartModal.vue';
+import EndModal from './components/EndModal.vue';
 
+//
 export default {
   name: 'app',
-  
+
   components: {
-    CodeEditor, GameCanvas
+    CodeEditor, GameCanvas, StartModal, EndModal
   },
 
   data: function() {
     return {
-      bus: new Vue()
+      bus: new Vue(),
+      gameIsRunning: false
     }
   },
 
@@ -36,8 +45,18 @@ export default {
       // Show end modal, which contains gamestate and signup form
       // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
 
+      this.$modal.show('endmodal');
+    },
+
+    startGame: function() {
+        this.$modal.hide('startmodal');
+        this.gameIsRunning = true;
     }
 
+  },
+
+  mounted: function() {
+      this.$modal.show('startmodal');
   }
 
 
