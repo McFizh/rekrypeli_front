@@ -3,7 +3,7 @@
   // For every loop iteration, you will get 3 values:
   // fuel: remaining fuel (0-100)
   // speed: vertical speed
-  // height: height of the lander 
+  // height: height of the lander
   // (0 = ground , 4000 = initial position)
 
   // ::::::::::::::::::
@@ -12,6 +12,7 @@
   // ::::::::::::::::::
 
   // Return engine power value (0-4)
+  // Note: Only integer values allowed
   return 0;
 }</div>
 </template>

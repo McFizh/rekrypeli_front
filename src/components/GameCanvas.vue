@@ -5,6 +5,11 @@
     <div class="grid-container">
       <div class="column">
         <timerComponent :minutes="minutes" :seconds="seconds"/>
+
+        <button @click="abandonGame" class="quitbutton">
+          <i class="fas fa-bomb" />
+        </button>
+
       </div>
       <div class="narrow-column">
         <button @click="requestCode" class="runbutton">
@@ -60,9 +65,13 @@ export default {
     },
 
     runSimulation: function (code) {
-      gameInterval = setInterval(function() { 
+      gameInterval = setInterval(function() {
         runloop(false,code);
       },100);
+    },
+
+    abandonGame: function() {
+
     }
   },
 
@@ -119,6 +128,10 @@ function runloop(init, code) {
     } else if(endState===1) {
       // Lander safe
       clearInterval(gameInterval);
+    } else if(endState==-2) {
+      // Syntax error in code
+      clearInterval(gameInterval);
+      this.$emit('syntaxerror');
     }
 }
 </script>
@@ -139,8 +152,15 @@ function runloop(init, code) {
   border-radius: 5px;
 }
 
-.runbutton i {
-  margin: 5px;
+.quitbutton {
+  font-size: 2em;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 20px;
+  vertical-align: top;
 }
 
+button i {
+  margin: 5px;
+}
 </style>

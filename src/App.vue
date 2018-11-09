@@ -13,6 +13,8 @@
 
     <StartModal @start="startGame"></StartModal>
     <EndModal></EndModal>
+    <modal name="giveupmodal">
+    </modal>
   </div>
 </template>
 

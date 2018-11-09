@@ -18,27 +18,34 @@ function getHeight() { return height/10; }
 function executeCode(code, fuel, speed, height) {
     "use strict";
 
-    let newcode="("+code+")("+fuel+","+speed+","+height+")";
-    var thrust = parseInt(eval(newcode));
+    var newcode="("+code+")("+fuel+","+speed+","+height+")";
+    var coderes = 0;
 
-    if( isNaN(thrust) || thrust <0 || thrust>4 ) {
+    try {
+        coderes = parseInt(eval(newcode));
+    } catch(err) {
+        return -1;
+    }
+
+    if( isNaN(coderes) || coderes <0 || coderes>4 || fuel <= 0 ) {
         return 0;
     }
 
-    return thrust;
+    return coderes;
 }
 
 function runSimulationLoop(usercode) {
 
     thrust = executeCode(usercode, fuel, speed, height);
-    if(fuel <= 0 ) {
+
+    // Something went wrong with parsing code
+    if(thrust==-1) {
         thrust = 0;
+        return -2;
     }
 
     //
-    if(thrust==0) {
-        speed+=4;
-    } else if(thrust==1) {
+    if(thrust==1) {
         speed+=2;
     } else if(thrust==2) {
         speed+=1;
@@ -46,6 +53,11 @@ function runSimulationLoop(usercode) {
         speed+=0;
     } else if(thrust==4) {
         speed-=1;
+    } else {
+        // Thrust = 0 or value not in allowed range.
+        // Although latter should not happen (tm)
+        thrust = 0;
+        speed+=4;
     }
 
     if(speed > 300) {
@@ -62,7 +74,7 @@ function runSimulationLoop(usercode) {
     height-=speed;
 
     if(height <= 0 ) {
-        
+
         height=0;
         thrust=0;
 

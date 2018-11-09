@@ -1,10 +1,10 @@
 <template>
-    <modal name="endmodal">
+    <modal name="giveupmodal">
 
     </modal>
 </template>
 <script>
 export default {
-    name: 'EndModal',
+    name: 'GiveupModal',
 }
 </script>
