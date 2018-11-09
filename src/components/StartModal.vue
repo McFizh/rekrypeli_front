@@ -3,7 +3,7 @@
         <div class="modal">
         <h1>Ambientia Space Race</h1>
         <p>Atri Ambientialainen from Ambientia has been developing simulator for
-            landing his vehicle safely to Moon, but every simulation ends in a crash. <br/>
+            landing probe safely to Moon, but every simulation ends in a crash. <br/>
             <br/>
             Your mission, should you choose to accept it, is to help Atri A. to develop JavaScript
             application that reduces the landing speed to 90 or less.<br>

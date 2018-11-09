@@ -1,5 +1,5 @@
 # Build frontend 
-FROM node:10.12 AS builder
+FROM node:10.13 AS builder
 
 RUN apt-get update ; apt-get install -y unzip
 
@@ -14,6 +14,9 @@ RUN npm run build
 
 # Create container for running frontend
 FROM nginx:1.14
+
+RUN apt-get update
+
 EXPOSE 80
 
 COPY --from=builder /services/dist /usr/share/nginx/html
