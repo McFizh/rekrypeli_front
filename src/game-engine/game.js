@@ -61,12 +61,22 @@ function runSimulationLoop(usercode) {
 
     height-=speed;
 
-    if(height < 0 ) {
+    if(height <= 0 ) {
+        
         height=0;
+        thrust=0;
+
+        if(speed > 90) {
+            // Lander crashed
+            return -1;
+        } else {
+            // Safe landing
+            return 1;
+        }
     }
 
-    // Return: is lander crashed
-    return height<=0?true:false;
+    // Lander simulation still running
+    return 0;
 }
 
 export default {

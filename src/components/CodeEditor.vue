@@ -1,6 +1,5 @@
 <template>
-    <div :id="editorId" class="flask-editor">
-function calcIteration(fuel, speed, height) {
+    <div :id="editorId" class="flask-editor">function calcIteration(fuel, speed, height) {
   // For every loop iteration, you will get 3 values:
   // fuel: remaining fuel (0-100)
   // speed: vertical speed
@@ -14,8 +13,7 @@ function calcIteration(fuel, speed, height) {
 
   // Return engine power value (0-4)
   return 0;
-}
-    </div>
+}</div>
 </template>
 
 <script>

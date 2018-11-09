@@ -28,7 +28,19 @@ export default {
     return {
       bus: new Vue()
     }
+  },
+
+  methods: {
+
+    showEndScreen: function(gameState) {
+      // Show end modal, which contains gamestate and signup form
+      // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
+
+    }
+
   }
+
+
 }
 </script>
 

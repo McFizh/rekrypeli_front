@@ -45,11 +45,18 @@ export default {
 
   methods: {
     requestCode: function() {
-      this.bus.$emit('requestcode');
+      // Remove any pending intervals
+      if(gameInterval) {
+        clearInterval(gameInterval);
+        gameInterval = null;
+      }
 
+      // Reset game engine values & initialize game area
       gameEngine.reset();
       runloop(true,"");
 
+      // This will request the coder from CodeEditor & start the engine
+      this.bus.$emit('requestcode');
     },
 
     runSimulation: function (code) {
@@ -79,6 +86,8 @@ export default {
   }
 }
 
+// :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 function runClockLoop(that) {
     var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
     var timeLeft = 15*60 - timeSpent;
@@ -88,11 +97,11 @@ function runClockLoop(that) {
 }
 
 function runloop(init, code) {
-    var crashed = false;
+    var endState;
 
     // Run simulation loop
     if(!init) {
-      crashed = gameEngine.runSimulationLoop( code );
+      endState = gameEngine.runSimulationLoop( code );
     }
 
     // Draw game area & lander
@@ -103,8 +112,12 @@ function runloop(init, code) {
       return;
     }
 
-    // Safety counter
-    if(crashed) {
+    // Has the simulation ran it's course, if yes.. check the end result
+    if(endState===-1) {
+      // Lander crashed
+      clearInterval(gameInterval);
+    } else if(endState===1) {
+      // Lander safe
       clearInterval(gameInterval);
     }
 }
