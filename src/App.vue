@@ -22,7 +22,9 @@
     </div>
 
     <StartModal @start="startGame" />
-    <EndModal />
+    <EndModal :endreason="endreason"
+        @sendanswers="sendAnswers"
+        @skipsending="backtostart" />
     <GiveupModal
         @resume="resumeGame"
         @giveup="giveupGame"/>
@@ -57,7 +59,8 @@ export default {
     return {
       bus: new Vue(),
       gameIsRunning: false,
-      codeFailed: false
+      codeFailed: false,
+      endreason: ""
     }
   },
 
@@ -66,8 +69,12 @@ export default {
     showEndScreen: function(gameState) {
         // Show end modal, which contains gamestate and signup form
         // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
+        this.$modal.hide('giveupmodal');
+        this.gameIsRunning = false;
+        this.endreason = gameState;
 
         this.$modal.show('endmodal');
+
     },
 
     startGame: function() {
@@ -83,17 +90,33 @@ export default {
         this.$modal.show('giveupmodal');
     },
 
+    // Give up modal .. resume button
     resumeGame: function() {
         this.$modal.hide('giveupmodal');
     },
 
+    // Give up modal .. give up button
     giveupGame: function() {
-        this.$modal.hide('giveupmodal');
+        this.bus.$emit('endgame');
+        this.showEndScreen('giveup');
+    },
+
+    // endDialog
+    sendAnswers: function(data) {
+        console.log(data);
+
+        this.backtostart();
+    },
+
+    backtostart: function() {
+        this.$modal.hide('endmodal');   
+        this.$modal.show('startmodal');
     }
 
   },
 
   mounted: function() {
+      this.bus.$on('gameover', (reason) => this.showEndScreen(reason) );
       this.$modal.show('startmodal');
   }
 

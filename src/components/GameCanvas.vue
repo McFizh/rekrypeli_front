@@ -96,6 +96,12 @@ export default {
     // Bind event
     this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
 
+    // Player gave up, clear out timers
+    this.bus.$on('endgame', () => {
+        if(gameInterval) { clearInterval(gameInterval); }
+        if(clockInterval) { clearInterval(clockInterval); }
+    } );
+
   }
 }
 
@@ -103,7 +109,16 @@ export default {
 
 function runClockLoop(that) {
     var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
-    var timeLeft = 15*60 - timeSpent;
+
+    // 15 x 60s => 900s
+    var timeLeft = 900 - timeSpent;
+
+    if(timeLeft<0) {
+      timeLeft = 0;
+      clearInterval(clockInterval);
+      clearInterval(gameInterval);
+      that.bus.$emit('gameover','timeout');
+    }
 
     that.minutes = Math.floor(timeLeft / 60);
     that.seconds = ( timeLeft % 60 ) < 10 ? "0"+( timeLeft % 60 ):( timeLeft % 60 );
@@ -133,6 +148,8 @@ function runloop(that, code) {
     } else if(endState===1) {
       // Lander safe
       clearInterval(gameInterval);
+      clearInterval(clockInterval);
+      that.bus.$emit('gameover','winner');
     } else if(endState==-2) {
       // Syntax error in code
       clearInterval(gameInterval);
