@@ -7,7 +7,7 @@
         <timerComponent :minutes="minutes" :seconds="seconds"/>
       </div>
       <div class="column">
-        <button @click="abandonGame" class="quitbutton">
+        <button @click="$emit('quitclicked')" class="quitbutton">
           <i class="fas fa-bomb" />
         </button>
 
@@ -30,6 +30,7 @@ import gameEngine from "../game-engine/game.js";
 var gameInterval;
 var clockInterval;
 var startingTime;
+var latestCode;
 
 export default {
   name: 'GameCanvas',
@@ -43,13 +44,13 @@ export default {
 
   data: function() {
     return {
-      value: 1,
       minutes: 15,
       seconds: "00"
     };
   },
 
   methods: {
+
     requestCode: function() {
       // Remove any pending intervals
       if(gameInterval) {
@@ -66,18 +67,8 @@ export default {
 
       // This will request the coder from CodeEditor & start the engine
       this.bus.$emit('requestcode');
-    },
-
-    runSimulation: function (code) {
-      var that=this;
-      gameInterval = setInterval(function() {
-        runloop(that,code);
-      },100);
-    },
-
-    abandonGame: function() {
-        this.$emit('quitclicked');
     }
+
   },
 
   mounted: function() {
@@ -85,6 +76,7 @@ export default {
 
     // Set starting time
     startingTime = new Date();
+    latestCode = "-not changed-";
 
     clockInterval = setInterval( () => {
       runClockLoop(that);
@@ -95,13 +87,31 @@ export default {
     runloop(null,"");
 
     // Bind event
-    this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
+    this.bus.$on('transmitcode', (code) => {
+      var that=this;
+
+      latestCode = code;
+
+      gameInterval = setInterval(function() {
+        runloop(that,code);
+      },100);
+
+    });
+
+    // Return latest code & time spent
+    this.bus.$on('datareq', ()=> {
+      this.bus.$emit('dataresp', {
+        code: latestCode,
+        time: Math.floor( (new Date() - startingTime) / 1000 )
+      })
+    });
   },
 
   beforeDestroy: function() {
         if(gameInterval) { clearInterval(gameInterval); }
         if(clockInterval) { clearInterval(clockInterval); }
         this.bus.$off('transmitcode');
+        this.bus.$off('datareq');
   }
 }
 
@@ -123,6 +133,8 @@ function runClockLoop(that) {
     that.minutes = Math.floor(timeLeft / 60);
     that.seconds = ( timeLeft % 60 ) < 10 ? "0"+( timeLeft % 60 ):( timeLeft % 60 );
 }
+
+// :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 function runloop(that, code) {
     var endState;
@@ -147,12 +159,11 @@ function runloop(that, code) {
       clearInterval(gameInterval);
     } else if(endState===1) {
       // Lander safe
-      that.bus.$emit('gameover','winner');
+      that.bus.$emit('gameover','winner',{});
     } else if(endState==-2) {
       // Syntax error in code
       clearInterval(gameInterval);
       that.$emit('syntaxerror',true);
-
     }
 }
 </script>

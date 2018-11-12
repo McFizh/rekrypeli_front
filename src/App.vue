@@ -33,6 +33,7 @@
 
 <script>
 import Vue from 'vue';
+import Axios from 'axios';
 
 // Import components
 import CodeEditor from './components/CodeEditor.vue';
@@ -45,6 +46,10 @@ import GiveupModal from './components/GiveupModal.vue';
 
 // Import css
 require('@/assets/css/main.css');
+
+//
+var latestCode;
+var timeSpent;
 
 //
 export default {
@@ -70,6 +75,11 @@ export default {
         // Show end modal, which contains gamestate and signup form
         // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
         this.$modal.hide('giveupmodal');
+
+        // Fetch code & time
+        this.bus.$emit('datareq');
+
+        //
         this.gameIsRunning = false;
         this.endreason = gameState;
 
@@ -102,20 +112,33 @@ export default {
 
     // endDialog
     sendAnswers: function(data) {
-        console.log(data);
+        // Fill in extra data
+        data.code = latestCode;
+        data.time = timeSpent;
 
+        // Send ajax req
+        Axios.post('/api/scores', data);
+
+        // Back to start
         this.backtostart();
     },
 
     backtostart: function() {
         this.$modal.hide('endmodal');
         this.$modal.show('startmodal');
+        latestCode = "";
+        timeSpent = 0;
     }
 
   },
 
   mounted: function() {
       this.bus.$on('gameover', (reason) => this.showEndScreen(reason) );
+      this.bus.$on('dataresp', (data) => {
+          latestCode = data.code;
+          timeSpent = data.time;
+      });
+
       this.$modal.show('startmodal');
   }
 

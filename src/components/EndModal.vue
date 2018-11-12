@@ -67,8 +67,19 @@ export default {
     },
 
     methods: {
+        resetForm: function() {
+            this.firstname = "";
+            this.lastname = "";
+            this.email = "";
+            this.intrest1 = false;
+            this.intrest2 = false;
+            this.intrest3 = false;
+            this.intrest4 = false;
+            this.permission = false;
+        },
+
         sendAnswers: function() {
-            this.$emit('sendanswers', {
+            var formData = {
                 firstname: this.firstname,
                 lastname: this.lastname,
                 email: this.email,
@@ -77,10 +88,15 @@ export default {
                 intrest3: this.intrest3,
                 intrest4: this.intrest4,
                 permission: this.permission
-            });
+            };
+
+            this.resetForm();
+            this.$emit('sendanswers', formData);
+
         },
 
         backToStart: function() {
+            this.resetForm();
             this.$emit('skipsending');
         }
     }
