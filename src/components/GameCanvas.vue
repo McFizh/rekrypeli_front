@@ -95,13 +95,12 @@ export default {
 
     // Bind event
     this.bus.$on('transmitcode', (code) => this.runSimulation(code) );
+  },
 
-    // Player gave up, clear out timers
-    this.bus.$on('endgame', () => {
+  beforeDestroy: function() {
         if(gameInterval) { clearInterval(gameInterval); }
         if(clockInterval) { clearInterval(clockInterval); }
-    } );
-
+        this.bus.$off('transmitcode');
   }
 }
 
@@ -147,13 +146,12 @@ function runloop(that, code) {
       clearInterval(gameInterval);
     } else if(endState===1) {
       // Lander safe
-      clearInterval(gameInterval);
-      clearInterval(clockInterval);
       that.bus.$emit('gameover','winner');
     } else if(endState==-2) {
       // Syntax error in code
       clearInterval(gameInterval);
       that.$emit('syntaxerror',true);
+
     }
 }
 </script>

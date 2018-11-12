@@ -97,7 +97,6 @@ export default {
 
     // Give up modal .. give up button
     giveupGame: function() {
-        this.bus.$emit('endgame');
         this.showEndScreen('giveup');
     },
 
@@ -109,7 +108,7 @@ export default {
     },
 
     backtostart: function() {
-        this.$modal.hide('endmodal');   
+        this.$modal.hide('endmodal');
         this.$modal.show('startmodal');
     }
 

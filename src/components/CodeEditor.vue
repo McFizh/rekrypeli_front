@@ -43,6 +43,10 @@ export default {
         );
 
         this.bus.$on('requestcode', this.fetchCode);
+    },
+
+    beforeDestroy: function() {
+        this.bus.$off('requestcode');
     }
 }
 </script>

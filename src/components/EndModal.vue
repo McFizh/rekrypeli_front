@@ -1,5 +1,5 @@
 <template>
-    <modal name="endmodal" v-bind:clickToClose="false" v-bind:scrollable="true" height="500">
+    <modal name="endmodal" v-bind:clickToClose="false" v-bind:scrollable="true" height="auto">
         <div class="modal-content">
         <h1>{{titleText}}</h1>
         I take part in competition!<br/>
