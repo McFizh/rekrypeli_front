@@ -5,13 +5,14 @@
     <div class="grid-container">
       <div class="column">
         <timerComponent :minutes="minutes" :seconds="seconds"/>
-
+      </div>
+      <div class="column">
         <button @click="abandonGame" class="quitbutton">
           <i class="fas fa-bomb" />
         </button>
 
       </div>
-      <div class="narrow-column">
+      <div class="column">
         <button @click="requestCode" class="runbutton">
           <i class="fas fa-play" />
         </button>
