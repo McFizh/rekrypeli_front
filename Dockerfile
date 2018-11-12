@@ -20,5 +20,6 @@ RUN apt-get update
 EXPOSE 80
 
 COPY --from=builder /services/dist /usr/share/nginx/html
+COPY docker_files/default.conf /etc/nginx/conf.d/
 
 CMD ["nginx","-g","daemon off;"]
