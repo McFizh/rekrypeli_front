@@ -1,5 +1,5 @@
 <template>
-    <modal name="startmodal">
+    <modal name="startmodal" v-bind:clickToClose="false">
         <div class="modal-content">
         <h1>Ambientia Space Race</h1>
         <p>Atri Ambientialainen from Ambientia has been developing simulator for
