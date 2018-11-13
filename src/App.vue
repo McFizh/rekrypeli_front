@@ -128,7 +128,7 @@ export default {
         this.$modal.show('startmodal');
         latestCode = "";
         timeSpent = 0;
-        codeFailed = false;
+        this.codeFailed = false;
     }
 
   },
