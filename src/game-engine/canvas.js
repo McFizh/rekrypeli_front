@@ -26,7 +26,36 @@ function drawGameArea(fuel, speed, engine) {
     ctx.fillText(" Spd: "+speed,10,60);
     ctx.fillText(" Eng: "+engine,10,90);
 }
-  
+
+function drawExplosion(xpos, ypos) {
+    var angle=0,range=0;
+    var el = document.getElementById("gamecanvas");
+    var ctx = el.getContext("2d");
+    var x, y, x0, y0;
+
+    ctx.strokeStyle="#ffff00";
+    ctx.beginPath();
+
+    for(let l1=0; l1<12; l1++) {
+        angle=30*l1-15+Math.floor(Math.random() * 30);
+        range=15+Math.floor(Math.random() * 30);
+
+        x=Math.round(Math.cos(angle * Math.PI / 180) * range + xpos);
+        y=Math.round(Math.sin(angle * Math.PI / 180) * range + ypos);
+
+        if(l1==0) {
+            ctx.moveTo(x,y);
+            x0=x; y0=y;
+        } else if(l1==11) {
+            ctx.lineTo(x0,y0);
+        } else {
+            ctx.lineTo(x,y);
+        }
+    }
+
+    ctx.stroke();
+}
+
 function drawLander(xpos,ypos, engine) {
     var el = document.getElementById("gamecanvas");
     var ctx = el.getContext("2d");
@@ -83,5 +112,6 @@ function drawLander(xpos,ypos, engine) {
   
 export default {
     drawGameArea: drawGameArea,
-    drawLander: drawLander
+    drawLander: drawLander,
+    drawExplosion: drawExplosion
 };

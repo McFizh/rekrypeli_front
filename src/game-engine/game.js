@@ -1,19 +1,18 @@
-var fuel=500,
-    speed=0,
-    thrust=0,
-    height;
+var fuel, speed, thrust, height, crashed;
 
 function reset() {
     fuel=100;
     speed=0;
     thrust=0;
     height=4000;
+    crashed=false;
 }
 
 function getFuel() { return fuel; }
 function getThrust() { return thrust; }
 function getSpeed() { return speed; }
 function getHeight() { return height/10; }
+function getCrashed() { return crashed; }
 
 function executeCode(code, fuel, speed, height) {
     "use strict";
@@ -80,6 +79,7 @@ function runSimulationLoop(usercode) {
 
         if(speed > 90) {
             // Lander crashed
+            crashed = true;
             return -1;
         } else {
             // Safe landing
@@ -97,5 +97,6 @@ export default {
     getThrust: getThrust,
     getSpeed: getSpeed,
     getHeight: getHeight,
+    getCrashed: getCrashed,
     runSimulationLoop: runSimulationLoop
 };

@@ -32,6 +32,8 @@ var clockInterval;
 var startingTime;
 var latestCode;
 
+var crashCounter;
+
 export default {
   name: 'GameCanvas',
 
@@ -77,6 +79,7 @@ export default {
     // Set starting time
     startingTime = new Date();
     latestCode = "-not changed-";
+    crashCounter = 10;
 
     clockInterval = setInterval( () => {
       runClockLoop(that);
@@ -137,26 +140,39 @@ function runClockLoop(that) {
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 function runloop(that, code) {
-    var endState;
+    var endState=null;
 
     // Run simulation loop
     if(that) {
-      endState = gameEngine.runSimulationLoop( code );
+      if(gameEngine.getCrashed()) {
+        crashCounter--;
+        if(crashCounter<=0) {
+          clearInterval(gameInterval);
+        }
+      } else {
+        endState = gameEngine.runSimulationLoop( code );
+      }
     }
 
     // Draw game area & lander
     canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
-    canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
+    if( gameEngine.getCrashed() ) {
+      if(crashCounter>0) {
+        canvasTools.drawExplosion(250, 410-gameEngine.getHeight());
+      }
+    } else {
+      canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
+    }
 
     // Only on init 'that' is null
-    if(that==null) {
+    if(that==null || (endState===null && gameEngine.getCrashed()) ) {
       return;
     }
 
     // Has the simulation ran it's course, if yes.. check the end result
     if(endState===-1) {
       // Lander crashed
-      clearInterval(gameInterval);
+      crashCounter = 10;
     } else if(endState===1) {
       // Lander safe
       that.bus.$emit('gameover','winner',{});
