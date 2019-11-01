@@ -1,7 +1,6 @@
 <template>
   <div id="app">
 
-
     <div v-if="gameIsRunning" class="grid-container">
       <div class="narrow-column">
         <GameCanvas :bus="bus"

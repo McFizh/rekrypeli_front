@@ -9,15 +9,15 @@
         <label for="lastname">Lastname:</label><input type="text" id="lastname" v-model="lastname"><br/>
         <label for="email">Email:</label><input type="text" id="email" v-model="email"><br/>
         <br/>
-        I want more information about Ambientia. I'm interested in:<br>
+        I want more information about company X. I'm interested in:<br>
         <br/>
-        <input type='checkbox' v-model="intrest1"> Ambientia's events<br/>
+        <input type='checkbox' v-model="intrest1"> Events<br/>
         <input type='checkbox' v-model="intrest2"> Job opportunities<br/>
         <input type='checkbox' v-model="intrest3"> Internship<br/>
-        <input type='checkbox' v-model="intrest4"> Writing final thesis to Ambientia<br/>
+        <input type='checkbox' v-model="intrest4"> Writing final thesis<br/>
         <br/>
         <input type='checkbox' name='permission' v-model="permission">
-        I agree, that Ambientia can use my personal data for above mentioned purposes.
+        I agree, that company X can use my personal data for above mentioned purposes.
         No information will be transferred to the third parties.
         Personal data will be kept in register for 12 months and after that all personal data will be removed.
         <br/>

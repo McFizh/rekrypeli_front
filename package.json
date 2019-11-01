@@ -28,7 +28,30 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "indent": [
+          "error",
+          2, {
+            "SwitchCase": 1
+          }
+      ],
+      "linebreak-style": [
+          "error",
+          "unix"
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "semi": [
+          "error",
+          "always"
+      ],
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ]
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }
