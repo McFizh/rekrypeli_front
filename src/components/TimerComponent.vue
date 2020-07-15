@@ -6,10 +6,9 @@
 
 <script>
 export default {
-    name: "TimerComponent",
-    props: [ 'minutes', 'seconds' ],
-
-}
+  name: 'TimerComponent',
+  props: [ 'minutes', 'seconds' ],
+};
 </script>
 
 <style scoped>

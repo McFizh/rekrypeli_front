@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import timerComponent from "./TimerComponent.vue";
+import timerComponent from './TimerComponent.vue';
 
-import canvasTools from "../game-engine/canvas.js";
-import gameEngine from "../game-engine/game.js";
+import canvasTools from '../game-engine/canvas.js';
+import gameEngine from '../game-engine/game.js';
 
 var gameInterval;
 var clockInterval;
@@ -47,7 +47,7 @@ export default {
   data: function() {
     return {
       minutes: 15,
-      seconds: "00"
+      seconds: '00'
     };
   },
 
@@ -65,7 +65,7 @@ export default {
 
       // Reset game engine values & initialize game area
       gameEngine.reset();
-      runloop(null,"");
+      runloop(null,'');
 
       // This will request the coder from CodeEditor & start the engine
       this.bus.$emit('requestcode');
@@ -78,7 +78,7 @@ export default {
 
     // Set starting time
     startingTime = new Date();
-    latestCode = "-not changed-";
+    latestCode = '-not changed-';
     crashCounter = 10;
 
     clockInterval = setInterval( () => {
@@ -87,7 +87,7 @@ export default {
 
     // Reset game-engine
     gameEngine.reset();
-    runloop(null,"");
+    runloop(null,'');
 
     // Bind event
     this.bus.$on('transmitcode', (code) => {
@@ -106,81 +106,81 @@ export default {
       this.bus.$emit('dataresp', {
         code: latestCode,
         time: Math.floor( (new Date() - startingTime) / 1000 )
-      })
+      });
     });
   },
 
   beforeDestroy: function() {
-        if(gameInterval) { clearInterval(gameInterval); }
-        if(clockInterval) { clearInterval(clockInterval); }
-        this.bus.$off('transmitcode');
-        this.bus.$off('datareq');
+    if(gameInterval) { clearInterval(gameInterval); }
+    if(clockInterval) { clearInterval(clockInterval); }
+    this.bus.$off('transmitcode');
+    this.bus.$off('datareq');
   }
-}
+};
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 function runClockLoop(that) {
-    var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
+  var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
 
-    // 15 x 60s => 900s
-    var timeLeft = 900 - timeSpent;
+  // 15 x 60s => 900s
+  var timeLeft = 900 - timeSpent;
 
-    if(timeLeft<0) {
-      timeLeft = 0;
-      clearInterval(clockInterval);
-      clearInterval(gameInterval);
-      that.bus.$emit('gameover','timeout');
-    }
+  if(timeLeft<0) {
+    timeLeft = 0;
+    clearInterval(clockInterval);
+    clearInterval(gameInterval);
+    that.bus.$emit('gameover','timeout');
+  }
 
-    that.minutes = Math.floor(timeLeft / 60);
-    that.seconds = ( timeLeft % 60 ) < 10 ? "0"+( timeLeft % 60 ):( timeLeft % 60 );
+  that.minutes = Math.floor(timeLeft / 60);
+  that.seconds = ( timeLeft % 60 ) < 10 ? '0'+( timeLeft % 60 ):( timeLeft % 60 );
 }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 function runloop(that, code) {
-    var endState=null;
+  var endState=null;
 
-    // Run simulation loop
-    if(that) {
-      if(gameEngine.getCrashed()) {
-        crashCounter--;
-        if(crashCounter<=0) {
-          clearInterval(gameInterval);
-        }
-      } else {
-        endState = gameEngine.runSimulationLoop( code );
-      }
-    }
-
-    // Draw game area & lander
-    canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
-    if( gameEngine.getCrashed() ) {
-      if(crashCounter>0) {
-        canvasTools.drawExplosion(250, 410-gameEngine.getHeight());
+  // Run simulation loop
+  if(that) {
+    if(gameEngine.getCrashed()) {
+      crashCounter--;
+      if(crashCounter<=0) {
+        clearInterval(gameInterval);
       }
     } else {
-      canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
+      endState = gameEngine.runSimulationLoop( code );
     }
+  }
 
-    // Only on init 'that' is null
-    if(that==null || (endState===null && gameEngine.getCrashed()) ) {
-      return;
+  // Draw game area & lander
+  canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
+  if( gameEngine.getCrashed() ) {
+    if(crashCounter>0) {
+      canvasTools.drawExplosion(250, 410-gameEngine.getHeight());
     }
+  } else {
+    canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
+  }
 
-    // Has the simulation ran it's course, if yes.. check the end result
-    if(endState===-1) {
-      // Lander crashed
-      crashCounter = 10;
-    } else if(endState===1) {
-      // Lander safe
-      that.bus.$emit('gameover','winner',{});
-    } else if(endState==-2) {
-      // Syntax error in code
-      clearInterval(gameInterval);
-      that.$emit('syntaxerror',true);
-    }
+  // Only on init 'that' is null
+  if(that==null || (endState===null && gameEngine.getCrashed()) ) {
+    return;
+  }
+
+  // Has the simulation ran it's course, if yes.. check the end result
+  if(endState===-1) {
+    // Lander crashed
+    crashCounter = 10;
+  } else if(endState===1) {
+    // Lander safe
+    that.bus.$emit('gameover','winner',{});
+  } else if(endState==-2) {
+    // Syntax error in code
+    clearInterval(gameInterval);
+    that.$emit('syntaxerror',true);
+  }
 }
 </script>
 

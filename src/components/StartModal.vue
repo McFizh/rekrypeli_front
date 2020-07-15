@@ -13,8 +13,8 @@
 </template>
 <script>
 export default {
-    name: 'StartModal',
-}
+  name: 'StartModal',
+};
 </script>
 
 <style scoped>

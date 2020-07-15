@@ -13,8 +13,8 @@
 
 <script>
 export default {
-    name: 'GiveupModal',
-}
+  name: 'GiveupModal',
+};
 </script>
 
 <style scoped>

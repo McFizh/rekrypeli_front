@@ -64,84 +64,84 @@ export default {
       bus: new Vue(),
       gameIsRunning: false,
       codeFailed: false,
-      endreason: ""
-    }
+      endreason: ''
+    };
   },
 
   methods: {
 
     showEndScreen: function(gameState) {
-        // Show end modal, which contains gamestate and signup form
-        // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
-        this.$modal.hide('giveupmodal');
+      // Show end modal, which contains gamestate and signup form
+      // gameStates: 1 = winner , -1 = timeout , -2 = game canceled
+      this.$modal.hide('giveupmodal');
 
-        // Fetch code & time
-        this.bus.$emit('datareq');
+      // Fetch code & time
+      this.bus.$emit('datareq');
 
-        //
-        this.gameIsRunning = false;
-        this.endreason = gameState;
+      //
+      this.gameIsRunning = false;
+      this.endreason = gameState;
 
-        this.$modal.show('endmodal');
+      this.$modal.show('endmodal');
 
     },
 
     startGame: function() {
-        this.$modal.hide('startmodal');
-        this.gameIsRunning = true;
+      this.$modal.hide('startmodal');
+      this.gameIsRunning = true;
     },
 
     showErrorLine: function(arg1) {
-        this.codeFailed = arg1;
+      this.codeFailed = arg1;
     },
 
     showGiveupDialog: function() {
-        this.$modal.show('giveupmodal');
+      this.$modal.show('giveupmodal');
     },
 
     // Give up modal .. resume button
     resumeGame: function() {
-        this.$modal.hide('giveupmodal');
+      this.$modal.hide('giveupmodal');
     },
 
     // Give up modal .. give up button
     giveupGame: function() {
-        this.showEndScreen('giveup');
+      this.showEndScreen('giveup');
     },
 
     // endDialog
     sendAnswers: function(data) {
-        // Fill in extra data
-        data.code = latestCode;
-        data.time = timeSpent;
+      // Fill in extra data
+      data.code = latestCode;
+      data.time = timeSpent;
 
-        // Send ajax req
-        Axios.post('/api/scores', data);
+      // Send ajax req
+      Axios.post('/api/scores', data);
 
-        // Back to start
-        this.backtostart();
+      // Back to start
+      this.backtostart();
     },
 
     backtostart: function() {
-        this.$modal.hide('endmodal');
-        this.$modal.show('startmodal');
-        latestCode = "";
-        timeSpent = 0;
-        this.codeFailed = false;
+      this.$modal.hide('endmodal');
+      this.$modal.show('startmodal');
+      latestCode = '';
+      timeSpent = 0;
+      this.codeFailed = false;
     }
 
   },
 
   mounted: function() {
-      this.bus.$on('gameover', (reason) => this.showEndScreen(reason) );
-      this.bus.$on('dataresp', (data) => {
-          latestCode = data.code;
-          timeSpent = data.time;
-      });
+    this.bus.$on('gameover', (reason) => this.showEndScreen(reason) );
+    this.bus.$on('dataresp', (data) => {
+      latestCode = data.code;
+      timeSpent = data.time;
+    });
 
-      this.$modal.show('startmodal');
+    this.$modal.show('startmodal');
   }
 
 
-}
+};
 </script>

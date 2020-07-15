@@ -30,78 +30,80 @@
 </template>
 <script>
 export default {
-    name: 'EndModal',
+  name: 'EndModal',
 
-    props: ['endreason'],
+  props: ['endreason'],
 
-    data: function() {
-        return {
-            firstname: "",
-            lastname: "",
-            email: "",
-            permission:false,
-            intrest1: false,
-            intrest2: false,
-            intrest3: false,
-            intrest4: false
-        };
+  data: function() {
+    return {
+      firstname: '',
+      lastname: '',
+      email: '',
+      permission:false,
+      intrest1: false,
+      intrest2: false,
+      intrest3: false,
+      intrest4: false
+    };
+  },
+
+  computed: {
+
+    titleText: function() {
+      if(this.endreason=='timeout') {
+        return 'Time ran out';
+      } else if(this.endreason=='giveup') {
+        return 'Mission aborted';
+      } else if(this.endreason=='winner') {
+        return 'Safe landing!';
+      }
+
+      return '';
     },
 
-    computed: {
-
-        titleText: function() {
-            if(this.endreason=="timeout") {
-                return "Time ran out";
-            } else if(this.endreason=="giveup") {
-                return "Mission aborted";
-            } else if(this.endreason=="winner") {
-                return "Safe landing!";
-            }
-        },
-
-        sendDisabled: function() {
-            return !this.permission;
-        }
-
-
-    },
-
-    methods: {
-        resetForm: function() {
-            this.firstname = "";
-            this.lastname = "";
-            this.email = "";
-            this.intrest1 = false;
-            this.intrest2 = false;
-            this.intrest3 = false;
-            this.intrest4 = false;
-            this.permission = false;
-        },
-
-        sendAnswers: function() {
-            var formData = {
-                firstname: this.firstname,
-                lastname: this.lastname,
-                email: this.email,
-                intrest1: this.intrest1,
-                intrest2: this.intrest2,
-                intrest3: this.intrest3,
-                intrest4: this.intrest4,
-                permission: this.permission
-            };
-
-            this.resetForm();
-            this.$emit('sendanswers', formData);
-
-        },
-
-        backToStart: function() {
-            this.resetForm();
-            this.$emit('skipsending');
-        }
+    sendDisabled: function() {
+      return !this.permission;
     }
 
-}
+
+  },
+
+  methods: {
+    resetForm: function() {
+      this.firstname = '';
+      this.lastname = '';
+      this.email = '';
+      this.intrest1 = false;
+      this.intrest2 = false;
+      this.intrest3 = false;
+      this.intrest4 = false;
+      this.permission = false;
+    },
+
+    sendAnswers: function() {
+      var formData = {
+        firstname: this.firstname,
+        lastname: this.lastname,
+        email: this.email,
+        intrest1: this.intrest1,
+        intrest2: this.intrest2,
+        intrest3: this.intrest3,
+        intrest4: this.intrest4,
+        permission: this.permission
+      };
+
+      this.resetForm();
+      this.$emit('sendanswers', formData);
+
+    },
+
+    backToStart: function() {
+      this.resetForm();
+      this.$emit('skipsending');
+    }
+  }
+
+};
 </script>
 
 <style scoped>

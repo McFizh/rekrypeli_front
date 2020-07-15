@@ -22,33 +22,33 @@ import CodeFlask from 'codeflask';
 var editorObj;
 
 export default {
-    name: 'CodeEditor',
-    props: [ 'name', 'bus' ],
+  name: 'CodeEditor',
+  props: [ 'name', 'bus' ],
 
-    data: function() {
-        return {
-            editorId: this.name + "-flask"
-        };
-    },
+  data: function() {
+    return {
+      editorId: this.name + '-flask'
+    };
+  },
 
-    methods: {
-      fetchCode: function() {
-        this.bus.$emit('transmitcode', editorObj.getCode());
-      }
-    },
-
-    mounted: function() {
-        editorObj = new CodeFlask(
-            document.getElementById(this.editorId), { language: 'js' }
-        );
-
-        this.bus.$on('requestcode', this.fetchCode);
-    },
-
-    beforeDestroy: function() {
-        this.bus.$off('requestcode');
+  methods: {
+    fetchCode: function() {
+      this.bus.$emit('transmitcode', editorObj.getCode());
     }
-}
+  },
+
+  mounted: function() {
+    editorObj = new CodeFlask(
+      document.getElementById(this.editorId), { language: 'js' }
+    );
+
+    this.bus.$on('requestcode', this.fetchCode);
+  },
+
+  beforeDestroy: function() {
+    this.bus.$off('requestcode');
+  }
+};
 </script>
 
 <style scoped>
