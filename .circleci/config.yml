@@ -5,5 +5,8 @@ workflows:
   deploy:
     jobs:
       - docker/publish:
-          image: mcfizh/rekrypeli_frontend
+          image: registry.heroku.com/rp-frontend/web
           tag: 'latest'
+          auth:
+            username: $HEROKU_EMAIL
+            password: $HEROKU_APIKEY
