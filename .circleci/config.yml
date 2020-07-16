@@ -7,10 +7,6 @@ jobs:
   deploy2heroku:
     executor: heroku/default
     steps:
-      - docker/publish:
-          image: rp-frontend/web
-          tag: latest
-          registry: registry.heroku.com
       - heroku/install
       - run:
           command: 'heroku publish -a rp-frontend web'
@@ -18,4 +14,8 @@ jobs:
 workflows:
   build-deploy-publish:
     jobs:
+      - docker/publish:
+          image: rp-frontend/web
+          tag: latest
+          registry: registry.heroku.com
       - deploy2heroku
