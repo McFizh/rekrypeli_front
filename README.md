@@ -1,3 +1,5 @@
+![CircleCI status](https://circleci.com/gh/McFizh/rekrypeli_front.svg?style=shield)
+
 # rekrypeli_front
 
 Frontend to rekrypeli. Setting up the app on local machine is simple:
