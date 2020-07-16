@@ -3,7 +3,7 @@ FROM node:12-slim AS builder
 
 WORKDIR /services
 
-COPY *.js package* ./
+COPY *.js .eslint* package* ./
 COPY src src
 COPY public public
 
