@@ -1,10 +1,21 @@
 version: 2.1
 orbs:
   docker: circleci/docker@1.3.0
-workflows:
-  deploy:
-    jobs:
+  heroku: circleci/heroku@1.0.1
+
+jobs:
+  deploy2heroku:
+    executor: heroku/default
+    steps:
       - docker/publish:
           image: rp-frontend/web
           tag: latest
           registry: registry.heroku.com
+      - heroku/install
+      - run:
+          command: 'heroku publish -a rp-frontend web'
+
+workflows:
+  build-deploy-publish:
+    jobs:
+      - deploy2heroku
