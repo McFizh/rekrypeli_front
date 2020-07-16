@@ -47,8 +47,8 @@ import GiveupModal from './components/GiveupModal.vue';
 require('@/assets/css/main.css');
 
 //
-var latestCode;
-var timeSpent;
+let latestCode;
+let timeSpent;
 
 //
 export default {

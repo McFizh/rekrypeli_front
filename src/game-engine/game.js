@@ -1,4 +1,4 @@
-var fuel, speed, thrust, height, crashed;
+let fuel, speed, thrust, height, crashed;
 
 function reset() {
   fuel=100;
@@ -17,8 +17,8 @@ function getCrashed() { return crashed; }
 function executeCode(code, fuel, speed, height) {
   'use strict';
 
-  var newcode='('+code+')('+fuel+','+speed+','+height+')';
-  var coderes = 0;
+  let newcode='('+code+')('+fuel+','+speed+','+height+')';
+  let coderes = 0;
 
   try {
     coderes = parseInt(eval(newcode));
@@ -92,11 +92,11 @@ function runSimulationLoop(usercode) {
 }
 
 export default {
-  reset: reset,
-  getFuel: getFuel,
-  getThrust: getThrust,
-  getSpeed: getSpeed,
-  getHeight: getHeight,
-  getCrashed: getCrashed,
-  runSimulationLoop: runSimulationLoop
+  reset,
+  getFuel,
+  getThrust,
+  getSpeed,
+  getHeight,
+  getCrashed,
+  runSimulationLoop
 };

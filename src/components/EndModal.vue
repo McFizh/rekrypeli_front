@@ -81,7 +81,7 @@ export default {
     },
 
     sendAnswers: function() {
-      var formData = {
+      const formData = {
         firstname: this.firstname,
         lastname: this.lastname,
         email: this.email,

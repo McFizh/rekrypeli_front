@@ -27,12 +27,12 @@ import timerComponent from './TimerComponent.vue';
 import canvasTools from '../game-engine/canvas.js';
 import gameEngine from '../game-engine/game.js';
 
-var gameInterval;
-var clockInterval;
-var startingTime;
-var latestCode;
+let gameInterval;
+let clockInterval;
+let startingTime;
+let latestCode;
 
-var crashCounter;
+let crashCounter;
 
 export default {
   name: 'GameCanvas',
@@ -65,38 +65,94 @@ export default {
 
       // Reset game engine values & initialize game area
       gameEngine.reset();
-      runloop(null,'');
+      this.runloop(true,'');
 
       // This will request the coder from CodeEditor & start the engine
       this.bus.$emit('requestcode');
-    }
+    },
 
+    runClockLoop: function () {
+      const timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
+
+      // 15 x 60s => 900s
+      let timeLeft = 900 - timeSpent;
+
+      if(timeLeft<0) {
+        timeLeft = 0;
+        clearInterval(clockInterval);
+        clearInterval(gameInterval);
+        this.bus.$emit('gameover','timeout');
+      }
+
+      this.minutes = Math.floor(timeLeft / 60);
+      this.seconds = ( timeLeft % 60 ) < 10 ? '0'+( timeLeft % 60 ):( timeLeft % 60 );
+    },
+
+    runloop: function (doInit, code) {
+      let endState=null;
+
+      // Run simulation loop
+      if(!doInit) {
+        if(gameEngine.getCrashed()) {
+          crashCounter--;
+          if(crashCounter<=0) {
+            clearInterval(gameInterval);
+          }
+        } else {
+          endState = gameEngine.runSimulationLoop( code );
+        }
+      }
+
+      // Draw game area & lander
+      canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
+      if( gameEngine.getCrashed() ) {
+        if(crashCounter>0) {
+          canvasTools.drawExplosion(250, 410-gameEngine.getHeight());
+        }
+      } else {
+        canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
+      }
+
+      // Only on init 'that' is null
+      if(doInit || (endState===null && gameEngine.getCrashed()) ) {
+        return;
+      }
+
+      // Has the simulation ran it's course, if yes.. check the end result
+      if(endState===-1) {
+        // Lander crashed
+        crashCounter = 10;
+      } else if(endState===1) {
+        // Lander safe
+        this.bus.$emit('gameover','winner',{});
+      } else if(endState==-2) {
+        // Syntax error in code
+        clearInterval(gameInterval);
+        this.$emit('syntaxerror',true);
+      }
+    }
   },
 
   mounted: function() {
-    var that = this;
-
     // Set starting time
     startingTime = new Date();
     latestCode = '-not changed-';
     crashCounter = 10;
 
     clockInterval = setInterval( () => {
-      runClockLoop(that);
+      this.runClockLoop();
     },1000);
 
     // Reset game-engine
     gameEngine.reset();
-    runloop(null,'');
+    this.runloop(true, '');
 
     // Bind event
     this.bus.$on('transmitcode', (code) => {
-      var that=this;
-
       latestCode = code;
 
-      gameInterval = setInterval(function() {
-        runloop(that,code);
+      gameInterval = setInterval( () => {
+        this.runloop(false, code);
       },100);
 
     });
@@ -117,71 +173,6 @@ export default {
     this.bus.$off('datareq');
   }
 };
-
-// :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-function runClockLoop(that) {
-  var timeSpent = Math.floor( (new Date() - startingTime) / 1000 );
-
-  // 15 x 60s => 900s
-  var timeLeft = 900 - timeSpent;
-
-  if(timeLeft<0) {
-    timeLeft = 0;
-    clearInterval(clockInterval);
-    clearInterval(gameInterval);
-    that.bus.$emit('gameover','timeout');
-  }
-
-  that.minutes = Math.floor(timeLeft / 60);
-  that.seconds = ( timeLeft % 60 ) < 10 ? '0'+( timeLeft % 60 ):( timeLeft % 60 );
-}
-
-// :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-function runloop(that, code) {
-  var endState=null;
-
-  // Run simulation loop
-  if(that) {
-    if(gameEngine.getCrashed()) {
-      crashCounter--;
-      if(crashCounter<=0) {
-        clearInterval(gameInterval);
-      }
-    } else {
-      endState = gameEngine.runSimulationLoop( code );
-    }
-  }
-
-  // Draw game area & lander
-  canvasTools.drawGameArea( gameEngine.getFuel(), gameEngine.getSpeed(), gameEngine.getThrust() );
-  if( gameEngine.getCrashed() ) {
-    if(crashCounter>0) {
-      canvasTools.drawExplosion(250, 410-gameEngine.getHeight());
-    }
-  } else {
-    canvasTools.drawLander(250, 400-gameEngine.getHeight() ,gameEngine.getThrust());
-  }
-
-  // Only on init 'that' is null
-  if(that==null || (endState===null && gameEngine.getCrashed()) ) {
-    return;
-  }
-
-  // Has the simulation ran it's course, if yes.. check the end result
-  if(endState===-1) {
-    // Lander crashed
-    crashCounter = 10;
-  } else if(endState===1) {
-    // Lander safe
-    that.bus.$emit('gameover','winner',{});
-  } else if(endState==-2) {
-    // Syntax error in code
-    clearInterval(gameInterval);
-    that.$emit('syntaxerror',true);
-  }
-}
 </script>
 
 <style scoped>

@@ -1,9 +1,9 @@
 function drawGameArea(fuel, speed, engine) {
-  var el = document.getElementById('gamecanvas');
-  var ctx = el.getContext('2d');
-  var yoff = 450;
-  var safex1 = 180;
-  var safex2 = 350;
+  const el = document.getElementById('gamecanvas');
+  const ctx = el.getContext('2d');
+  const yoff = 450;
+  const safex1 = 180;
+  const safex2 = 350;
 
   //
   ctx.clearRect(0, 0, 500,500);
@@ -28,10 +28,10 @@ function drawGameArea(fuel, speed, engine) {
 }
 
 function drawExplosion(xpos, ypos) {
-  var angle=0,range=0;
-  var el = document.getElementById('gamecanvas');
-  var ctx = el.getContext('2d');
-  var x, y, x0, y0;
+  const el = document.getElementById('gamecanvas');
+  const ctx = el.getContext('2d');
+  let angle=0, range=0;
+  let x, y, x0, y0;
 
   ctx.strokeStyle='#ffff00';
   ctx.beginPath();
@@ -57,8 +57,8 @@ function drawExplosion(xpos, ypos) {
 }
 
 function drawLander(xpos,ypos, engine) {
-  var el = document.getElementById('gamecanvas');
-  var ctx = el.getContext('2d');
+  const el = document.getElementById('gamecanvas');
+  const ctx = el.getContext('2d');
 
   ctx.strokeStyle='#00ff00';
 
@@ -93,9 +93,9 @@ function drawLander(xpos,ypos, engine) {
 
   // Draw flame
   if(engine>0) {
-    var multiplier = Math.floor(Math.random()*3)+1;
+    let multiplier = Math.floor(Math.random()*3)+1;
 
-    var size=engine*(4+multiplier);
+    let size=engine*(4+multiplier);
     ctx.beginPath();
     ctx.strokeStyle='#ffff00';
     ctx.ellipse(xpos,ypos+40+size,10,size, 0, 0 ,2*Math.PI);
@@ -111,7 +111,7 @@ function drawLander(xpos,ypos, engine) {
 }
 
 export default {
-  drawGameArea: drawGameArea,
-  drawLander: drawLander,
-  drawExplosion: drawExplosion
+  drawGameArea,
+  drawLander,
+  drawExplosion
 };
