@@ -9,7 +9,7 @@ jobs:
     steps:
       - heroku/install
       - run:
-          command: 'heroku publish -a rp-frontend web'
+          command: 'heroku container:release -a rp-frontend web'
 
 workflows:
   build-deploy-publish:
@@ -18,4 +18,6 @@ workflows:
           image: rp-frontend/web
           tag: latest
           registry: registry.heroku.com
-      - deploy2heroku
+      - deploy2heroku:
+          requires:
+            - docker/publish
